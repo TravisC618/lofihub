@@ -1,13 +1,13 @@
 import React from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
-import Album from "../demo/Album";
+import { Route, Switch } from "react-router-dom";
+import Discover from "../discover/components/Discover";
 import { LOGIN_URL } from "./URLMAP";
-import Login from "../login/Login";
+import Login from "../discover/login/Login";
 
 const Routes = () => {
   return (
     <Switch>
-      <Route exact path="/" component={Album} />
+      <Route exact path="/" component={Discover} />
       <Route exact path={LOGIN_URL} component={Login} />
     </Switch>
   );
