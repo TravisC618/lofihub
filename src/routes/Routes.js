@@ -1,16 +1,21 @@
 import React from "react";
 import { Route, Switch } from "react-router-dom";
 import Discover from "../discover/components/Discover";
-import { LOGIN_URL } from "./URLMAP";
-import Login from "../discover/login/Login";
+import { LOGIN_URL, REGISTER_URL, ACCOUNT_URL } from "./URLMAP";
+import Login from "../login/Login";
+import Register from "../login/Register";
+import Account from "../account/components/Account";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const Routes = () => {
-  return (
-    <Switch>
-      <Route exact path="/" component={Discover} />
-      <Route exact path={LOGIN_URL} component={Login} />
-    </Switch>
-  );
+    return (
+        <Switch>
+            <Route exact path="/" component={Discover} />
+            <Route exact path={LOGIN_URL} component={Login} />
+            <Route exact path={REGISTER_URL} component={Register} />
+            <ProtectedRoute exact path={ACCOUNT_URL} component={Account} />
+        </Switch>
+    );
 };
 
 export default Routes;
