@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Route } from "react-router-dom";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
@@ -16,6 +17,7 @@ import NotificationsIcon from "@material-ui/icons/Notifications";
 import ListItems from "./ListItems";
 import Dashboard from "../dashboard/Dashboard";
 import Settings from "../settings/components/Settings";
+import { ACCOUNT_URL, ACCOUNT_SETTING_URL } from "../../routes/URLMAP";
 
 const drawerWidth = 240;
 
@@ -98,10 +100,10 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function Account() {
+export default function Account(props) {
     const classes = useStyles();
+    const { history } = props;
     const [openDraw, setOpenDraw] = useState(true);
-    const [openSettings, setOpenSettings] = useState(false);
     const handleDrawerOpen = () => {
         setOpenDraw(true);
     };
@@ -109,12 +111,8 @@ export default function Account() {
         setOpenDraw(false);
     };
 
-    const handleSettingsOpen = () => {
-        setOpenSettings(true);
-    };
-
     const handleSettingsClose = () => {
-        setOpenSettings(false);
+        history.goBack();
     };
 
     return (
@@ -173,15 +171,17 @@ export default function Account() {
                 </div>
                 <Divider />
                 <List>
-                    <ListItems handleSettingsOpen={handleSettingsOpen} />
+                    <ListItems />
                 </List>
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
                 <Dashboard />
-                <Settings
-                    openSettings={openSettings}
-                    handleSettingsClose={handleSettingsClose}
+                <Route
+                    path={ACCOUNT_URL + ACCOUNT_SETTING_URL}
+                    render={() => (
+                        <Settings handleSettingsClose={handleSettingsClose} />
+                    )}
                 />
             </main>
         </div>

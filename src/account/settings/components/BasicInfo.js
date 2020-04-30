@@ -6,7 +6,6 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import { makeStyles } from "@material-ui/core/styles";
-
 import DatePicker from "./DatePicker";
 
 const useStyles = makeStyles((theme) => ({
@@ -20,26 +19,27 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const BasicInfo = (props) => {
-    const { radioValue, handleRadiosChange } = props;
+    const { userInfo, handleInfoChange, handleBDayChange } = props;
     const classes = useStyles();
 
     return (
         <div className={classes.root}>
             <TextField
                 label="Username"
-                id="outlined-margin-normal"
-                className={classes.margin}
-                defaultValue="*Current username"
-                margin="normal"
+                name="username"
                 variant="outlined"
+                className={classes.margin}
+                defaultValue={userInfo.username}
+                margin="normal"
+                onChange={handleInfoChange}
             />
             <FormControl component="fieldset">
                 <FormLabel component="legend">Gender</FormLabel>
                 <RadioGroup
                     aria-label="gender"
                     name="gender"
-                    value={radioValue}
-                    onChange={handleRadiosChange}
+                    value={userInfo.gender}
+                    onChange={handleInfoChange}
                 >
                     <FormControlLabel
                         value="female"
@@ -59,16 +59,20 @@ const BasicInfo = (props) => {
                 </RadioGroup>
             </FormControl>
             <div className={classes.margin}>
-                <DatePicker />
+                <DatePicker
+                    birthday={userInfo.birthday}
+                    handleBDayChange={handleBDayChange}
+                />
             </div>
             <TextField
-                id="outlined-multiline-static"
-                label="Multiline"
+                label="Introduction"
+                name="introduction"
                 multiline
                 fullWidth
-                rows={2}
-                defaultValue="Default Value"
                 variant="outlined"
+                rows={2}
+                defaultValue={userInfo.introduction}
+                onChange={handleInfoChange}
             />
         </div>
     );

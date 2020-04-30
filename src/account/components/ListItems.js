@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -10,10 +11,9 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import VideoLibraryIcon from "@material-ui/icons/VideoLibrary";
 import Divider from "@material-ui/core/Divider";
+import { ACCOUNT_URL, ACCOUNT_SETTING_URL } from "../../routes/URLMAP";
 
 const ListItems = (props) => {
-    const { handleSettingsOpen } = props;
-
     return (
         <>
             <div>
@@ -41,12 +41,17 @@ const ListItems = (props) => {
                     </ListItemIcon>
                     <ListItemText primary="History" />
                 </ListItem>
-                <ListItem button onClick={handleSettingsOpen}>
-                    <ListItemIcon>
-                        <SettingsIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Settings" />
-                </ListItem>
+                <Link
+                    style={{ textDecoration: "none", color: "#000" }}
+                    to={ACCOUNT_URL + ACCOUNT_SETTING_URL}
+                >
+                    <ListItem button>
+                        <ListItemIcon>
+                            <SettingsIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Settings" />
+                    </ListItem>
+                </Link>
             </div>
             <Divider />
 

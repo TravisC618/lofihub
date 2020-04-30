@@ -16,7 +16,7 @@ import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import NavDrawer from "./NavDrawer";
-import { removeToken, isLoggedIn } from "../../utils/auth";
+import { removeToken, removeUserId, isLoggedIn } from "../../utils/auth";
 import { LOGIN_URL, ACCOUNT_URL } from "../../routes/URLMAP";
 
 const useStyles = makeStyles((theme) => ({
@@ -124,6 +124,7 @@ export default function TopNav() {
 
     const handleLogout = () => {
         removeToken();
+        removeUserId();
     };
 
     const handleMobileMenuOpen = (event) => {

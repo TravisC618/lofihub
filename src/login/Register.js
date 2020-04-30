@@ -15,7 +15,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { register } from "../api/user";
 import { registerValidation } from "../utils/validator";
-import { setToken } from "../utils/auth";
+import { setToken, setUserId } from "../utils/auth";
 import { LOGIN_URL, ACCOUNT_URL } from "../routes/URLMAP";
 import LoadingSpinner from "../UI/LoadingSpinner";
 
@@ -114,8 +114,9 @@ const Register = (props) => {
             const { email, username, password } = form;
             response = await register({ email, username, password });
             setIsLoading(false);
-            const { token } = response.data.data;
+            const { userId, token } = response.data.data;
             setToken(token);
+            setUserId(userId);
             history.replace(ACCOUNT_URL);
         } catch (error) {
             setIsLoading(false);

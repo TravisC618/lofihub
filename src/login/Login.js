@@ -14,7 +14,7 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { login } from "../api/user";
-import { setToken } from "../utils/auth";
+import { setToken, setUserId } from "../utils/auth";
 import { REGISTER_URL, ACCOUNT_URL } from "../routes/URLMAP";
 import LoadingSpinner from "../UI/LoadingSpinner";
 
@@ -85,8 +85,9 @@ const Login = (props) => {
         try {
             response = await login(form);
             setIsLoading(false);
-            const { token } = response.data.data;
+            const { userId, token } = response.data.data;
             setToken(token);
+            setUserId(userId);
             const locationState = location.state;
             const redirectTo =
                 (locationState && locationState.from) || ACCOUNT_URL;
