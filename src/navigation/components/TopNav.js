@@ -16,8 +16,17 @@ import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import NavDrawer from "./NavDrawer";
-import { removeToken, isLoggedIn } from "../../utils/auth";
-import { LOGIN_URL, ACCOUNT_URL } from "../../routes/URLMAP";
+import {
+    removeToken,
+    removeUserId,
+    isLoggedIn,
+    getUserId,
+} from "../../utils/auth";
+import {
+    LOGIN_URL,
+    ACCOUNT_URL,
+    ACCOUNT_DASHBOARD_URL,
+} from "../../routes/URLMAP";
 
 const useStyles = makeStyles((theme) => ({
     grow: {
@@ -124,6 +133,7 @@ export default function TopNav() {
 
     const handleLogout = () => {
         removeToken();
+        removeUserId();
     };
 
     const handleMobileMenuOpen = (event) => {
@@ -147,7 +157,15 @@ export default function TopNav() {
                         className={classes.menuItem}
                         onClick={handleMenuClose}
                     >
-                        <Link to={ACCOUNT_URL}>My account</Link>
+                        <Link
+                            to={
+                                ACCOUNT_URL +
+                                `/${getUserId()}` +
+                                ACCOUNT_DASHBOARD_URL
+                            }
+                        >
+                            My account
+                        </Link>
                     </MenuItem>
                     <MenuItem
                         className={classes.menuItem}

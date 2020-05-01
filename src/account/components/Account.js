@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Route, Link } from "react-router-dom";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
@@ -13,9 +13,26 @@ import Badge from "@material-ui/core/Badge";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import NotificationsIcon from "@material-ui/icons/Notifications";
+import VideoCallIcon from "@material-ui/icons/VideoCall";
 import ListItems from "./ListItems";
 import Dashboard from "../dashboard/Dashboard";
 import Settings from "../settings/components/Settings";
+import MyVideos from "../myVideos/components/MyVideos";
+import Favourite from "../favourite/Favourite";
+import History from "../history/History";
+import ProfileHead from "./ProfileHead";
+import LoadingBackdrop from "../../UI/LoadingBackdrop";
+import { getUserInfo } from "../../api/user";
+import {
+    ACCOUNT_URL,
+    ACCOUNT_DASHBOARD_URL,
+    ACCOUNT_SETTING_URL,
+    ACCOUNT_VIDEOS_URL,
+    ACCOUNT_FAVORITE_URL,
+    ACCOUNT_HISTORY_URL,
+    UPLOAD_URL,
+} from "../../routes/URLMAP";
+import UploadVideo from "../uploadVideo.js/UploadVideo";
 
 const drawerWidth = 240;
 
@@ -34,6 +51,7 @@ const useStyles = makeStyles((theme) => ({
         ...theme.mixins.toolbar,
     },
     appBar: {
+        backgroundColor: "#f4f7f6",
         zIndex: theme.zIndex.drawer + 1,
         transition: theme.transitions.create(["width", "margin"], {
             easing: theme.transitions.easing.sharp,
@@ -50,6 +68,7 @@ const useStyles = makeStyles((theme) => ({
     },
     menuButton: {
         marginRight: 36,
+        color: "rgba(0, 0, 0, 0.54)",
     },
     menuButtonHidden: {
         display: "none",
@@ -96,12 +115,26 @@ const useStyles = makeStyles((theme) => ({
     fixedHeight: {
         height: 240,
     },
+    notificationIcon: {
+        color: "rgba(0, 0, 0, 0.54)",
+    },
 }));
 
-export default function Account() {
+export default function Account(props) {
     const classes = useStyles();
+    const { history, match } = props;
+
+    const [userInfo, setUserInfo] = useState({
+        usename: "",
+        gender: "",
+        birthday: "",
+        introduction: "",
+        avatar: "",
+    });
+    const [isLoading, setIsLoading] = useState(false);
+    const [err, setErr] = useState("");
+
     const [openDraw, setOpenDraw] = useState(true);
-    const [openSettings, setOpenSettings] = useState(false);
     const handleDrawerOpen = () => {
         setOpenDraw(true);
     };
@@ -109,13 +142,58 @@ export default function Account() {
         setOpenDraw(false);
     };
 
-    const handleSettingsOpen = () => {
-        setOpenSettings(true);
+    const handleSettingsClose = () => {
+        history.goBack();
     };
 
-    const handleSettingsClose = () => {
-        setOpenSettings(false);
+    const handleUploadDialogClose = () => {
+        history.goBack();
     };
+
+    const handleInfoChange = (event) => {
+        const key = event.target.name;
+        const value = event.target.value;
+        setUserInfo({ ...userInfo, [key]: value });
+    };
+
+    const handleBDayChange = (date) => {
+        setUserInfo({ ...userInfo, birthday: new Date(date) });
+    };
+
+    const handleLoading = (status) => {
+        setIsLoading(status);
+    };
+
+    useEffect(() => {
+        async function fetchUserInfo() {
+            setIsLoading(true);
+            try {
+                const response = await getUserInfo();
+                const {
+                    username,
+                    gender,
+                    birthday,
+                    introduction,
+                    avatar,
+                } = response.data.data;
+                setUserInfo({
+                    username,
+                    gender,
+                    birthday,
+                    introduction,
+                    avatar,
+                });
+                setIsLoading(false);
+            } catch (error) {
+                if (error.response) {
+                    setErr(error.response.data.error);
+                }
+                setIsLoading(false);
+            }
+        }
+
+        fetchUserInfo();
+    }, []);
 
     return (
         <div className={classes.root}>
@@ -140,7 +218,7 @@ export default function Account() {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography
+                    {/* <Typography
                         component="h1"
                         variant="h6"
                         color="inherit"
@@ -148,8 +226,18 @@ export default function Account() {
                         className={classes.title}
                     >
                         Dashboard
-                    </Typography>
-                    <IconButton color="inherit">
+                    </Typography> */}
+                    <Link
+                        to={match.url + UPLOAD_URL}
+                        style={{ textDecoration: "none", color: "#000" }}
+                    >
+                        <IconButton className={classes.notificationIcon}>
+                            <Badge color="secondary">
+                                <VideoCallIcon />
+                            </Badge>
+                        </IconButton>
+                    </Link>
+                    <IconButton className={classes.notificationIcon}>
                         <Badge badgeContent={4} color="secondary">
                             <NotificationsIcon />
                         </Badge>
@@ -173,17 +261,63 @@ export default function Account() {
                 </div>
                 <Divider />
                 <List>
-                    <ListItems handleSettingsOpen={handleSettingsOpen} />
+                    <ListItems />
                 </List>
             </Drawer>
-            <main className={classes.content}>
-                <div className={classes.appBarSpacer} />
-                <Dashboard />
-                <Settings
-                    openSettings={openSettings}
-                    handleSettingsClose={handleSettingsClose}
-                />
-            </main>
+            {isLoading ? (
+                <LoadingBackdrop />
+            ) : (
+                <main className={classes.content}>
+                    <div className={classes.appBarSpacer} />
+                    <ProfileHead
+                        username={userInfo.username}
+                        introduction={userInfo.introduction}
+                        avatar={userInfo.avatar}
+                    />
+                    <Divider />
+                    <Route
+                        path={ACCOUNT_URL + "/:userId" + ACCOUNT_DASHBOARD_URL}
+                        component={Dashboard}
+                    />
+                    <Route
+                        path={ACCOUNT_URL + "/:userId" + ACCOUNT_VIDEOS_URL}
+                        component={MyVideos}
+                    />
+                    <Route
+                        path={ACCOUNT_URL + "/:userId" + ACCOUNT_FAVORITE_URL}
+                        component={Favourite}
+                    />
+                    <Route
+                        path={ACCOUNT_URL + "/:userId" + ACCOUNT_HISTORY_URL}
+                        component={History}
+                    />
+                    <Route
+                        path={match.path + ACCOUNT_SETTING_URL}
+                        render={() => (
+                            <Settings
+                                isLoading={isLoading}
+                                userInfo={userInfo}
+                                handleLoading={handleLoading}
+                                handleInfoChange={handleInfoChange}
+                                handleBDayChange={handleBDayChange}
+                                handleSettingsClose={handleSettingsClose}
+                            />
+                        )}
+                    />
+                    <Route
+                        path={match.path + UPLOAD_URL}
+                        render={() => (
+                            <UploadVideo
+                                isLoading={isLoading}
+                                handleLoading={handleLoading}
+                                handleUploadDialogClose={
+                                    handleUploadDialogClose
+                                }
+                            />
+                        )}
+                    />
+                </main>
+            )}
         </div>
     );
 }

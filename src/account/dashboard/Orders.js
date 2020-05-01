@@ -18,41 +18,36 @@ const rows = [
         0,
         "16 Mar, 2019",
         "Elvis Presley",
-        "Tupelo, MS",
-        "VISA ⠀•••• 3719",
-        312.44
+        "Studio Ghibli Summer Night Piano",
+        "To whoever is reading this, you are loved."
     ),
     createData(
         1,
         "16 Mar, 2019",
         "Paul McCartney",
-        "London, UK",
-        "VISA ⠀•••• 2574",
-        866.99
+        "Piano Covered by kno",
+        "Most of us are living, but not with the kind of..."
     ),
     createData(
         2,
         "16 Mar, 2019",
         "Tom Scholz",
-        "Boston, MA",
-        "MC ⠀•••• 1253",
-        100.81
+        "Chill Study Beats",
+        "It's 4 A.M and here I am, crying with all those coments"
     ),
     createData(
         3,
         "16 Mar, 2019",
         "Michael Jackson",
-        "Gary, IN",
-        "AMEX ⠀•••• 2000",
-        654.39
+        "Studio Ghibli Summer Night Piano",
+        "Have you ever asked yourself: is this it?"
     ),
     createData(
         4,
         "15 Mar, 2019",
         "Bruce Springsteen",
-        "Long Branch, NJ",
-        "VISA ⠀•••• 5919",
-        212.79
+        "Piano Covered by kno",
+        "Once, when I was younger, I had two of the greatest friends in the world."
     ),
 ];
 
@@ -70,15 +65,14 @@ export default function Orders() {
     const classes = useStyles();
     return (
         <React.Fragment>
-            <Title>Recent Orders</Title>
+            <Title>Recent Comments</Title>
             <Table size="small">
                 <TableHead>
                     <TableRow>
                         <TableCell>Date</TableCell>
-                        <TableCell>Name</TableCell>
-                        <TableCell>Ship To</TableCell>
-                        <TableCell>Payment Method</TableCell>
-                        <TableCell align="right">Sale Amount</TableCell>
+                        <TableCell>Username</TableCell>
+                        <TableCell>Video Name</TableCell>
+                        <TableCell align="right">Comments</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -87,15 +81,16 @@ export default function Orders() {
                             <TableCell>{row.date}</TableCell>
                             <TableCell>{row.name}</TableCell>
                             <TableCell>{row.shipTo}</TableCell>
-                            <TableCell>{row.paymentMethod}</TableCell>
-                            <TableCell align="right">{row.amount}</TableCell>
+                            <TableCell align="right">
+                                {row.paymentMethod}
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
             <div className={classes.seeMore}>
                 <Link color="primary" href="#" onClick={preventDefault}>
-                    See more orders
+                    See more comments
                 </Link>
             </div>
         </React.Fragment>
