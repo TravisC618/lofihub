@@ -16,7 +16,11 @@ import { makeStyles } from "@material-ui/core/styles";
 import { register } from "../api/user";
 import { registerValidation } from "../utils/validator";
 import { setToken, setUserId } from "../utils/auth";
-import { LOGIN_URL, ACCOUNT_URL } from "../routes/URLMAP";
+import {
+    LOGIN_URL,
+    ACCOUNT_URL,
+    ACCOUNT_DASHBOARD_URL,
+} from "../routes/URLMAP";
 import LoadingSpinner from "../UI/LoadingSpinner";
 
 function Copyright() {
@@ -117,7 +121,7 @@ const Register = (props) => {
             const { userId, token } = response.data.data;
             setToken(token);
             setUserId(userId);
-            history.replace(ACCOUNT_URL);
+            history.replace(ACCOUNT_URL + `/${userId}` + ACCOUNT_DASHBOARD_URL);
         } catch (error) {
             setIsLoading(false);
             if (error.response) {

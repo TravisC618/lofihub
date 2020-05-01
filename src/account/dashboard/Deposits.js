@@ -18,9 +18,9 @@ export default function Deposits() {
     const classes = useStyles();
     return (
         <React.Fragment>
-            <Title>Recent Deposits</Title>
+            <Title>Recent likes</Title>
             <Typography component="p" variant="h4">
-                $3,024.00
+                3,024
             </Typography>
             <Typography
                 color="textSecondary"
@@ -30,7 +30,7 @@ export default function Deposits() {
             </Typography>
             <div>
                 <Link color="primary" href="#" onClick={preventDefault}>
-                    View balance
+                    More details
                 </Link>
             </div>
         </React.Fragment>

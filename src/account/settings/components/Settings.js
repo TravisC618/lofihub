@@ -16,6 +16,7 @@ import { getUserInfo } from "../../../api/user";
 import LoadingBackdrop from "../../../UI/LoadingBackdrop";
 import { setUserId } from "../../../utils/auth";
 import { updateUserInfo, uploadUserAvatar } from "../../../api/user";
+import Alert from "../../../UI/Alert";
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -64,19 +65,19 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Settings = (props) => {
-    const { handleSettingsClose } = props;
+    const {
+        handleLoading,
+        handleInfoChange,
+        handleBDayChange,
+        handleSettingsClose,
+        userInfo,
+        isLoading,
+    } = props;
     const theme = useTheme();
     const classes = useStyles();
 
-    const [userInfo, setUserInfo] = useState({
-        username: "",
-        gender: "",
-        birthday: "",
-        introduction: "",
-    });
     const [avatar, setAvatar] = useState("");
     const [tabValue, setTabValue] = useState(0);
-    const [isLoading, setIsLoading] = useState(false);
     const [err, setErr] = useState("");
 
     const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -85,74 +86,39 @@ const Settings = (props) => {
         setTabValue(newTab);
     };
 
-    const handleInfoChange = (event) => {
-        const key = event.target.name;
-        const value = event.target.value;
-        setUserInfo({ ...userInfo, [key]: value });
-    };
-
-    const handleBDayChange = (date) => {
-        setUserInfo({ ...userInfo, birthday: new Date(date) });
-    };
-
     const handleUpdateUserInfo = async () => {
-        setIsLoading(true);
+        handleLoading(true);
         try {
             const response = await updateUserInfo(userInfo);
-            console.log(response);
-            setIsLoading(false);
+            handleLoading(false);
         } catch (error) {
             if (error.response) {
                 setErr(error.response.data.error);
             }
-            setIsLoading(false);
+            handleLoading(false);
         }
     };
 
     const handleFileSelect = (event) => {
-        console.log(event.target.files[0]);
         setAvatar(event.target.files[0]);
     };
 
     const handleAvatarUpload = async () => {
-        setIsLoading(true);
+        handleLoading(true);
 
         try {
             const fd = new FormData();
             fd.append("avatar", avatar);
             const response = await uploadUserAvatar(fd);
-            console.log("response: ", response);
-            setIsLoading(false);
+            handleLoading(false);
         } catch (error) {
-            console.log(error);
+            handleLoading(false);
             if (error.response) {
                 console.log(error.response);
                 setErr(error.response.data.error);
             }
-            setIsLoading(false);
         }
     };
-
-    useEffect(() => {
-        async function fetchUserInfo() {
-            setIsLoading(true);
-            try {
-                const response = await getUserInfo();
-                const {
-                    username,
-                    gender,
-                    birthday,
-                    introduction,
-                } = response.data.data;
-                setUserInfo({ username, gender, birthday, introduction });
-                setIsLoading(false);
-            } catch (error) {
-                console.log(error);
-                setIsLoading(false);
-            }
-        }
-        fetchUserInfo();
-    }, []);
 
     return (
         <Dialog
@@ -191,6 +157,7 @@ const Settings = (props) => {
                             />
                         </TabPanel>
                         <TabPanel value={tabValue} index={1}>
+                            {err && <Alert msg={err} />}
                             <input type="file" onChange={handleFileSelect} />
                             <button onClick={handleAvatarUpload}>upload</button>
                         </TabPanel>

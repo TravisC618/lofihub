@@ -56,7 +56,7 @@ export default function Chart() {
                                 fill: theme.palette.text.primary,
                             }}
                         >
-                            Sales ($)
+                            Views
                         </Label>
                     </YAxis>
                     <Line

@@ -13,7 +13,10 @@ const Routes = () => {
             <Route exact path="/" component={Discover} />
             <Route exact path={LOGIN_URL} component={Login} />
             <Route exact path={REGISTER_URL} component={Register} />
-            <ProtectedRoute path={ACCOUNT_URL} component={Account} />
+            <ProtectedRoute
+                path={ACCOUNT_URL + "/:userId"}
+                component={Account}
+            />
         </Switch>
     );
 };
