@@ -1,19 +1,59 @@
 import React from "react";
+import { Link, withRouter } from "react-router-dom";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import Avatar from "@material-ui/core/Avatar";
-import Box from "@material-ui/core/Box";
-import { makeStyles } from "@material-ui/core/styles";
+import { WATCH_URL } from "../../../routes/URLMAP";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import IconButton from "@material-ui/core/IconButton";
+import EditIcon from "@material-ui/icons/Edit";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import PlayCircleFilledWhiteIcon from "@material-ui/icons/PlayCircleFilledWhite";
+import { EDIT_VIDEO_URL } from "../../../routes/URLMAP";
 
 const useStyles = makeStyles((theme) => ({
+    root: {
+        display: "flex",
+        justifyContent: "space-between",
+    },
+    details: {
+        display: "flex",
+        flexDirection: "column",
+    },
+    content: {
+        flex: "1 0 auto",
+        "& a": {
+            textDecoration: "none",
+            color: "#000",
+        },
+    },
+    cover: {
+        width: 151,
+    },
+    controls: {
+        display: "flex",
+        alignItems: "center",
+        paddingLeft: theme.spacing(1),
+        paddingBottom: theme.spacing(1),
+        "& button": {
+            outline: 0,
+        },
+    },
+    editIcon: {
+        height: 38,
+        width: 38,
+    },
+
     cardGrid: {
         paddingTop: theme.spacing(8),
         paddingBottom: theme.spacing(8),
         maxWidth: "none",
+        "& a": {
+            textDecoration: "none",
+        },
     },
     card: {
         height: "100%",
@@ -26,45 +66,70 @@ const useStyles = makeStyles((theme) => ({
     cardContent: {
         flexGrow: 1,
     },
-    avatar: {
-        width: theme.spacing(3),
-        height: theme.spacing(3),
-        marginRight: theme.spacing(1),
-    },
 }));
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-const VideoBlock = () => {
+const VideoBlock = (props) => {
     const classes = useStyles();
+
+    const {
+        username,
+        videosArr,
+        location: { pathname: currentPath },
+    } = props;
 
     return (
         <Container className={classes.cardGrid} maxWidth="md">
             <Grid container spacing={4}>
-                {cards.map((card) => (
-                    <Grid item key={card} xs={12} sm={6} md={4}>
-                        <Card className={classes.card}>
+                {videosArr.map((video) => (
+                    <Grid item key={video} sm={12} md={6}>
+                        <Card className={classes.root}>
+                            <div className={classes.details}>
+                                <CardContent className={classes.content}>
+                                    <Link to={`${WATCH_URL}/${video._id}`}>
+                                        <Typography component="h5" variant="h5">
+                                            {video.title
+                                                ? video.title
+                                                : "Title required"}
+                                        </Typography>
+                                        <Typography
+                                            variant="subtitle1"
+                                            color="textSecondary"
+                                        >
+                                            {username}
+                                        </Typography>
+                                    </Link>
+                                </CardContent>
+                                <div className={classes.controls}>
+                                    <Link to={`${WATCH_URL}/${video._id}`}>
+                                        <IconButton aria-label="play">
+                                            <PlayCircleFilledWhiteIcon />
+                                        </IconButton>
+                                    </Link>
+                                    <Link
+                                        to={`${currentPath + EDIT_VIDEO_URL}/${
+                                            video._id
+                                        }`}
+                                    >
+                                        <IconButton aria-label="edit">
+                                            <EditIcon
+                                                className={classes.editIcon}
+                                            />
+                                        </IconButton>
+                                    </Link>
+                                    <IconButton aria-label="more-info">
+                                        <MoreVertIcon />
+                                    </IconButton>
+                                </div>
+                            </div>
                             <CardMedia
-                                className={classes.cardMedia}
-                                image="https://source.unsplash.com/random"
-                                title="Image title"
+                                className={classes.cover}
+                                image={
+                                    video.thumbnail
+                                        ? video.thumbnail
+                                        : "https://source.unsplash.com/random"
+                                }
+                                title={video.title}
                             />
-                            <CardContent className={classes.cardContent}>
-                                <Typography
-                                    gutterBottom
-                                    variant="h5"
-                                    component="h2"
-                                >
-                                    Title
-                                </Typography>
-                                <Box display="flex" flexDirection="row">
-                                    <Avatar
-                                        className={classes.avatar}
-                                        alt="Remy Sharp"
-                                        src="/static/images/avatar/1.jpg"
-                                    />
-                                    <Typography>Username</Typography>
-                                </Box>
-                            </CardContent>
                         </Card>
                     </Grid>
                 ))}
@@ -73,4 +138,4 @@ const VideoBlock = () => {
     );
 };
 
-export default VideoBlock;
+export default withRouter(VideoBlock);

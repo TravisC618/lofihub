@@ -2,7 +2,8 @@ import axios from "axios";
 import { getToken } from "../utils/auth";
 
 // axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
-axios.defaults.baseURL = "http://lofihub-server.herokuapp.com/api";
+axios.defaults.baseURL = "http://localhost:4000/api";
+// axios.defaults.baseURL = "http://lofihub-server.herokuapp.com/api";
 
 const appendAuthToken = (config) => {
     const jwtToken = getToken();

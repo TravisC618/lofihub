@@ -16,6 +16,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { register } from "../api/user";
 import { registerValidation } from "../utils/validator";
 import { setToken, setUserId } from "../utils/auth";
+import PwdStrengthIndicator from "./PwdStrengthIndicator";
 import {
     LOGIN_URL,
     ACCOUNT_URL,
@@ -118,10 +119,15 @@ const Register = (props) => {
             const { email, username, password } = form;
             response = await register({ email, username, password });
             setIsLoading(false);
-            const { userId, token } = response.data.data;
-            setToken(token);
+            const { userId } = response.data.data;
+            // setToken(token);
             setUserId(userId);
-            history.replace(ACCOUNT_URL + `/${userId}` + ACCOUNT_DASHBOARD_URL);
+
+            // pop up notification: "The confirmation email has send"
+            // ...
+            alert("The confirmation link has send, please check your email");
+
+            // history.replace(ACCOUNT_URL + `/${userId}` + ACCOUNT_DASHBOARD_URL);
         } catch (error) {
             setIsLoading(false);
             if (error.response) {
@@ -198,6 +204,7 @@ const Register = (props) => {
                             error={err.type === "password"}
                             helperText={err.type === "password" && err.msg}
                         />
+                        <PwdStrengthIndicator currentPwd={form.password} />
                         <TextField
                             variant="outlined"
                             margin="normal"

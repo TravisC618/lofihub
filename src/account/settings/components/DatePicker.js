@@ -20,7 +20,7 @@ export default function DatePicker(props) {
                     margin="normal"
                     id="date-picker-inline"
                     name="birthday"
-                    label="Date picker inline"
+                    label="Birthday"
                     value={birthday}
                     onChange={handleBDayChange}
                     KeyboardButtonProps={{

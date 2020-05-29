@@ -7,6 +7,7 @@ import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import { makeStyles } from "@material-ui/core/styles";
 import DatePicker from "./DatePicker";
+import CountrySelector from "./CountrySelector";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -63,6 +64,9 @@ const BasicInfo = (props) => {
                     birthday={userInfo.birthday}
                     handleBDayChange={handleBDayChange}
                 />
+            </div>
+            <div className={classes.margin}>
+                <CountrySelector />
             </div>
             <TextField
                 label="Introduction"

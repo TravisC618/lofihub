@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
@@ -11,12 +11,13 @@ import Dialog from "@material-ui/core/Dialog";
 import Button from "@material-ui/core/Button";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
+import AvatarEditor from "react-avatar-editor";
 import BasicInfo from "./BasicInfo";
-import { getUserInfo } from "../../../api/user";
 import LoadingBackdrop from "../../../UI/LoadingBackdrop";
-import { setUserId } from "../../../utils/auth";
 import { updateUserInfo, uploadUserAvatar } from "../../../api/user";
-import Alert from "../../../UI/Alert";
+import Alert from "../../../UI/ActionAlerts";
+import AvatarUploader from "./AvatarUploader";
+import { b64toBlob } from "../../../utils/helper";
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -69,7 +70,7 @@ const Settings = (props) => {
         handleLoading,
         handleInfoChange,
         handleBDayChange,
-        handleSettingsClose,
+        handleModuleClose,
         userInfo,
         isLoading,
     } = props;
@@ -80,37 +81,45 @@ const Settings = (props) => {
     const [tabValue, setTabValue] = useState(0);
     const [err, setErr] = useState("");
 
-    const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
 
     const handleTabsChange = (event, newTab) => {
         setTabValue(newTab);
     };
 
     const handleUpdateUserInfo = async () => {
-        handleLoading(true);
-        try {
-            const response = await updateUserInfo(userInfo);
-            handleLoading(false);
-        } catch (error) {
-            if (error.response) {
-                setErr(error.response.data.error);
-            }
-            handleLoading(false);
+        switch (tabValue) {
+            case 0:
+                handleLoading(true);
+                try {
+                    const response = await updateUserInfo(userInfo);
+                    handleLoading(false);
+                } catch (error) {
+                    if (error.response) {
+                        setErr(error.response.data.error);
+                    }
+                    handleLoading(false);
+                }
+                break;
+            case 1:
+                handleAvatarUpload();
+                break;
+            default:
+                return;
         }
     };
 
-    const handleFileSelect = (event) => {
-        setAvatar(event.target.files[0]);
-    };
-
     const handleAvatarUpload = async () => {
+        if (!avatar) return;
         handleLoading(true);
+        const blob = b64toBlob(avatar);
+        const fd = new FormData();
+        fd.append("avatar", blob);
 
         try {
-            const fd = new FormData();
-            fd.append("avatar", avatar);
             const response = await uploadUserAvatar(fd);
             handleLoading(false);
+            console.log(response);
         } catch (error) {
             handleLoading(false);
             if (error.response) {
@@ -124,7 +133,7 @@ const Settings = (props) => {
         <Dialog
             fullScreen={fullScreen}
             open={true}
-            onClose={handleSettingsClose}
+            onClose={handleModuleClose}
             aria-labelledby="responsive-dialog-title"
         >
             <div className={classes.root}>
@@ -158,8 +167,10 @@ const Settings = (props) => {
                         </TabPanel>
                         <TabPanel value={tabValue} index={1}>
                             {err && <Alert msg={err} />}
-                            <input type="file" onChange={handleFileSelect} />
-                            <button onClick={handleAvatarUpload}>upload</button>
+                            <AvatarUploader
+                                originalAvatar={userInfo.avatar}
+                                setAvatar={setAvatar}
+                            />
                         </TabPanel>
                         <TabPanel value={tabValue} index={2}>
                             Item Three

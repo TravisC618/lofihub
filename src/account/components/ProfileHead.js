@@ -13,8 +13,9 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(2),
     },
     avatar: {
-        width: theme.spacing(7),
-        height: theme.spacing(7),
+        width: theme.spacing(10),
+        height: theme.spacing(10),
+        padding: theme.spacing(1),
     },
 }));
 
@@ -52,9 +53,8 @@ const ProfileHead = (props) => {
                 >
                     <div className="avatar-block">
                         <Avatar
-                            // alt={username}
-                            src={avatar}
-                            className={classes.large}
+                            src={avatar + "?" + Math.random()}
+                            className={classes.avatar}
                         />
                     </div>
                     <div className="username-block">{username}</div>

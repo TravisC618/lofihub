@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { withRouter, Link } from "react-router-dom";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
@@ -18,6 +19,7 @@ import {
     REGISTER_URL,
     ACCOUNT_URL,
     ACCOUNT_DASHBOARD_URL,
+    RESETPASSWORD_URL,
 } from "../routes/URLMAP";
 import LoadingSpinner from "../UI/LoadingSpinner";
 
@@ -70,7 +72,6 @@ const useStyles = makeStyles((theme) => ({
 const Login = (props) => {
     const { history, location } = props;
     const classes = useStyles();
-
     const [form, setForm] = useState({ email: "", password: "" });
     const [isLoading, setIsLoading] = useState(false);
     const [err, setErr] = useState(null);
@@ -173,7 +174,9 @@ const Login = (props) => {
                         </Button>
                         <Grid container>
                             <Grid item xs>
-                                <Link variant="body2">Forgot password?</Link>
+                                <Link variant="body2" to={RESETPASSWORD_URL}>
+                                    Forgot password?
+                                </Link>
                             </Grid>
                             <Grid item>
                                 <Link to={REGISTER_URL} variant="body2">

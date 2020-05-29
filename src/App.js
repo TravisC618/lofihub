@@ -1,5 +1,6 @@
 import React from "react";
 import TopNav from "./navigation/components/TopNav";
+import Footer from "./footer/Footer";
 import Drawer from "./navigation/components/NavDrawer";
 import Routes from "./routes/Routes";
 import { createMuiTheme } from "@material-ui/core/styles";
@@ -18,9 +19,10 @@ function App() {
             <div>
                 <TopNav />
                 <Drawer />
-                <div className="main-page">
+                <main className="main">
                     <Routes />
-                </div>
+                </main>
+                <Footer />
             </div>
         </ThemeProvider>
     );
