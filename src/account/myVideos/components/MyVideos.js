@@ -1,10 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
-import Divider from "@material-ui/core/Divider";
-import Icon from "@material-ui/core/Icon";
-import Avatar from "@material-ui/core/Avatar";
 import VideoBlock from "./VideosBlock";
+import { getUserInfo } from "../../../api/user";
 
 const useStyles = makeStyles((theme) => ({
     dataBlock: {
@@ -26,21 +24,23 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const MyVideos = () => {
+const MyVideos = (props) => {
     const classes = useStyles();
+    const { username, videosArr } = props;
+
     return (
         <>
             <div className={classes.dataBlock}>
                 <ur className={classes.dataUr}>
                     <li className={classes.dataList}>
-                        <strong>11 Videos</strong>
+                        <strong>{videosArr.length} Videos</strong>
                     </li>
-                    <li className={classes.dataList}>387 Likes</li>
-                    <li className={classes.dataList}>2988 Favorites</li>
+                    <li className={classes.dataList}>387 Views</li>
+                    <li className={classes.dataList}>2988 Likes</li>
                 </ur>
             </div>
             <div className={classes.videoBlock}>
-                <VideoBlock />
+                <VideoBlock username={username} videosArr={videosArr} />
             </div>
         </>
     );

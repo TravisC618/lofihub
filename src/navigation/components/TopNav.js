@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { withRouter } from "react-router-dom";
+import querystring from "querystring";
 import { Link } from "react-router-dom";
 import { fade, makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -16,6 +19,7 @@ import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import NavDrawer from "./NavDrawer";
+import { UPDATE_SEARCH_VALUE } from "../../redux/actions/searchAction";
 import {
     removeToken,
     removeUserId,
@@ -26,7 +30,10 @@ import {
     LOGIN_URL,
     ACCOUNT_URL,
     ACCOUNT_DASHBOARD_URL,
+    SEARCH_URL,
 } from "../../routes/URLMAP";
+import { useEffect } from "react";
+import LoadingSpinner from "../../UI/LoadingSpinner";
 
 const useStyles = makeStyles((theme) => ({
     grow: {
@@ -109,14 +116,18 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function TopNav() {
+const TopNav = ({ history, location: { search: searchQuery } }) => {
     const classes = useStyles();
     const [isDrawerOpen, setIsDrawOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
 
+    const [searchInput, setSearchInput] = useState("");
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+    const searchState = useSelector((state) => state.search);
+    const dispatch = useDispatch();
 
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -139,6 +150,30 @@ export default function TopNav() {
     const handleMobileMenuOpen = (event) => {
         setMobileMoreAnchorEl(event.currentTarget);
     };
+
+    const updateSearchValue = (event) => {
+        setSearchInput(event.target.value);
+        // dispatch({ type: UPDATE_SEARCH_VALUE, searchVal: event.target.value });
+    };
+
+    const handleSearch = (event) => {
+        if (event.key === "Enter") {
+            dispatch({
+                type: UPDATE_SEARCH_VALUE,
+                searchVal: event.target.value,
+            });
+            const stringField = querystring.stringify({
+                q: searchInput,
+            });
+            const parse = querystring.parse(stringField);
+            history.push(`${SEARCH_URL}?${stringField}`);
+        }
+    };
+
+    useEffect(() => {
+        const parse = querystring.parse(searchQuery.replace("?", ""));
+        setSearchInput(parse.q);
+    }, [searchQuery]);
 
     const menuId = "primary-search-account-menu";
     const renderMenu = () => {
@@ -244,7 +279,8 @@ export default function TopNav() {
 
     return (
         <div className={classes.grow}>
-            <AppBar className={classes.appbar} position="static">
+            <AppBar className={classes.appbar} position="fixed">
+                {searchState.isFetching && <LoadingSpinner />}
                 <Toolbar>
                     <IconButton
                         edge="start"
@@ -268,19 +304,24 @@ export default function TopNav() {
                             Lofihub
                         </Typography>
                     </Link>
-                    <div className={classes.search}>
-                        <div className={classes.searchIcon}>
-                            <SearchIcon />
+                    {!searchState.isFetching && (
+                        <div className={classes.search}>
+                            <div className={classes.searchIcon}>
+                                <SearchIcon />
+                            </div>
+                            <InputBase
+                                placeholder="Search…"
+                                classes={{
+                                    root: classes.inputRoot,
+                                    input: classes.inputInput,
+                                }}
+                                value={searchInput}
+                                onChange={updateSearchValue}
+                                inputProps={{ "aria-label": "search" }}
+                                onKeyDown={handleSearch}
+                            />
                         </div>
-                        <InputBase
-                            placeholder="Search…"
-                            classes={{
-                                root: classes.inputRoot,
-                                input: classes.inputInput,
-                            }}
-                            inputProps={{ "aria-label": "search" }}
-                        />
-                    </div>
+                    )}
                     <div className={classes.grow} />
                     <div className={classes.sectionDesktop}>
                         <IconButton
@@ -327,4 +368,6 @@ export default function TopNav() {
             {renderMenu()}
         </div>
     );
-}
+};
+
+export default withRouter(TopNav);

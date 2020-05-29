@@ -21,7 +21,7 @@ import {
     ACCOUNT_SETTING_URL,
 } from "../../routes/URLMAP";
 
-const ListItems = ({ match }) => {
+const ListItems = ({ match, location }) => {
     return (
         <>
             <div>
@@ -71,7 +71,7 @@ const ListItems = ({ match }) => {
                 </Link>
                 <Link
                     style={{ textDecoration: "none", color: "#000" }}
-                    to={match.url + ACCOUNT_SETTING_URL}
+                    to={location.pathname + ACCOUNT_SETTING_URL}
                 >
                     <ListItem button>
                         <ListItemIcon>

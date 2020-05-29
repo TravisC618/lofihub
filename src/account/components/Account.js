@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Route, Link } from "react-router-dom";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
@@ -10,6 +11,7 @@ import List from "@material-ui/core/List";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
 import Badge from "@material-ui/core/Badge";
+import HomeIcon from "@material-ui/icons/Home";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import NotificationsIcon from "@material-ui/icons/Notifications";
@@ -31,8 +33,10 @@ import {
     ACCOUNT_FAVORITE_URL,
     ACCOUNT_HISTORY_URL,
     UPLOAD_URL,
+    EDIT_VIDEO_URL,
 } from "../../routes/URLMAP";
 import UploadVideo from "../uploadVideo.js/UploadVideo";
+import EditModule from "../myVideos/components/EditModule";
 
 const drawerWidth = 240;
 
@@ -42,6 +46,9 @@ const useStyles = makeStyles((theme) => ({
     },
     toolbar: {
         paddingRight: 24, // keep right padding when drawer closed
+        "& button": {
+            outline: 0,
+        },
     },
     toolbarIcon: {
         display: "flex",
@@ -122,7 +129,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Account(props) {
     const classes = useStyles();
-    const { history, match } = props;
+    const { history, match, location } = props;
+
+    console.log(location.pathname + ACCOUNT_SETTING_URL);
 
     const [userInfo, setUserInfo] = useState({
         usename: "",
@@ -130,7 +139,9 @@ export default function Account(props) {
         birthday: "",
         introduction: "",
         avatar: "",
+        videos: [],
     });
+
     const [isLoading, setIsLoading] = useState(false);
     const [err, setErr] = useState("");
 
@@ -142,11 +153,7 @@ export default function Account(props) {
         setOpenDraw(false);
     };
 
-    const handleSettingsClose = () => {
-        history.goBack();
-    };
-
-    const handleUploadDialogClose = () => {
+    const handleModuleClose = () => {
         history.goBack();
     };
 
@@ -175,6 +182,7 @@ export default function Account(props) {
                     birthday,
                     introduction,
                     avatar,
+                    videos,
                 } = response.data.data;
                 setUserInfo({
                     username,
@@ -182,6 +190,7 @@ export default function Account(props) {
                     birthday,
                     introduction,
                     avatar,
+                    videos,
                 });
                 setIsLoading(false);
             } catch (error) {
@@ -218,17 +227,18 @@ export default function Account(props) {
                     >
                         <MenuIcon />
                     </IconButton>
-                    {/* <Typography
-                        component="h1"
-                        variant="h6"
-                        color="inherit"
-                        noWrap
-                        className={classes.title}
-                    >
-                        Dashboard
-                    </Typography> */}
                     <Link
-                        to={match.url + UPLOAD_URL}
+                        to="/"
+                        style={{ textDecoration: "none", color: "#000" }}
+                    >
+                        <IconButton className={classes.notificationIcon}>
+                            <Badge color="secondary">
+                                <HomeIcon />
+                            </Badge>
+                        </IconButton>
+                    </Link>
+                    <Link
+                        to={location.pathname + UPLOAD_URL}
                         style={{ textDecoration: "none", color: "#000" }}
                     >
                         <IconButton className={classes.notificationIcon}>
@@ -281,7 +291,12 @@ export default function Account(props) {
                     />
                     <Route
                         path={ACCOUNT_URL + "/:userId" + ACCOUNT_VIDEOS_URL}
-                        component={MyVideos}
+                        render={() => (
+                            <MyVideos
+                                username={userInfo.username}
+                                videosArr={userInfo.videos}
+                            />
+                        )}
                     />
                     <Route
                         path={ACCOUNT_URL + "/:userId" + ACCOUNT_FAVORITE_URL}
@@ -292,7 +307,7 @@ export default function Account(props) {
                         component={History}
                     />
                     <Route
-                        path={match.path + ACCOUNT_SETTING_URL}
+                        path={match.path + "/:section" + ACCOUNT_SETTING_URL}
                         render={() => (
                             <Settings
                                 isLoading={isLoading}
@@ -300,20 +315,29 @@ export default function Account(props) {
                                 handleLoading={handleLoading}
                                 handleInfoChange={handleInfoChange}
                                 handleBDayChange={handleBDayChange}
-                                handleSettingsClose={handleSettingsClose}
+                                handleModuleClose={handleModuleClose}
                             />
                         )}
                     />
                     <Route
-                        path={match.path + UPLOAD_URL}
+                        path={match.path + "/:section" + UPLOAD_URL}
                         render={() => (
                             <UploadVideo
                                 isLoading={isLoading}
                                 handleLoading={handleLoading}
-                                handleUploadDialogClose={
-                                    handleUploadDialogClose
-                                }
+                                handleModuleClose={handleModuleClose}
                             />
+                        )}
+                    />
+                    <Route
+                        path={
+                            match.path +
+                            "/:section" +
+                            EDIT_VIDEO_URL +
+                            "/:videoId"
+                        }
+                        render={() => (
+                            <EditModule handleModuleClose={handleModuleClose} />
                         )}
                     />
                 </main>
