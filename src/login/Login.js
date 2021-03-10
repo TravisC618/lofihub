@@ -22,6 +22,7 @@ import {
     RESETPASSWORD_URL,
 } from "../routes/URLMAP";
 import LoadingSpinner from "../UI/LoadingSpinner";
+import { wechatAuthorize } from "../api/wechat";
 
 function Copyright() {
     return (
@@ -105,6 +106,12 @@ const Login = (props) => {
         }
     };
 
+    const handleWechatLogin = async () => {
+        const response = await wechatAuthorize();
+        const authURL = response.data.authUrl;
+        window.location.href = authURL; // redirect to external links
+    }
+
     return (
         <Grid container component="main" className={classes.root}>
             <CssBaseline />
@@ -171,6 +178,15 @@ const Login = (props) => {
                             onClick={handleLogin}
                         >
                             Login In
+                        </Button>
+                        <Button
+                            fullWidth
+                            variant="contained"
+                            color="secondary"
+                            className={classes.submit}
+                            onClick={handleWechatLogin}
+                        >
+                            Wechat Login
                         </Button>
                         <Grid container>
                             <Grid item xs>
